@@ -134,36 +134,105 @@ namespace ConsoleApp1
             numberOfRoutes = 1;
             bool optimusRoute = false;
 
+            int bestDistance = currentDistance;
+            string bestRoute = currentRoute;
+
             // Mientras no encontremos una ruta óptima (global o local), repetimos,
+            Console.BackgroundColor = ConsoleColor.DarkBlue;
+            Console.WriteLine(currentRoute + " " + currentDistance);
+            Console.BackgroundColor = ConsoleColor.Black;
             while (!optimusRoute)
             {
+                bestDistance = currentDistance;
+                bestRoute = currentRoute;
+
                 // Comprobamos todas las soluciones adyacentes.
                 foreach (string route in AdjacentRoutes(currentRoute))
                 {
-
+                    int nextDistance = CalculateDistance(route);
+                    if (nextDistance < bestDistance)
+                    {
+                        bestDistance = nextDistance;
+                        bestRoute = route;
+                    }
+                    Console.Write(route + " " + nextDistance + "\t");
+                    numberOfRoutes++;
                 }
+                Console.BackgroundColor = ConsoleColor.DarkBlue;
+                Console.Write(bestRoute + " " + bestDistance + "\t");
+                Console.BackgroundColor = ConsoleColor.Black;
 
-                // Si ninguna de ellas mejora nuestra solución actual,
-                    // Consideramos que ya hemos encontrado una solución óptima.
-                // En caso contrario,
-                    // Nos quedamos con la mejor solución adyacente encontrada
+                if (bestRoute == currentRoute)
+                {
+                    optimusRoute = true;
+                }
+                else {
+                    currentRoute = bestRoute;
+                    currentDistance = bestDistance;
+                }
             }
+            Console.WriteLine("\nTotal Routes Explored: " + numberOfRoutes);
+            Console.WriteLine("Best Solution Found:" + bestRoute + " " + bestDistance);
+        }
 
+        private string[] AdjacentRoutes(string route)
+        {
+            int length = route.Length;
+            int numberOfAdjacents = NumberOfAdjacentRoutes(route);
+            string[] routes = new string[numberOfAdjacents];
+
+            int index = 0;
+            for (int firstCity = 1; firstCity < length-2; firstCity++)
+            {
+                for(int secondCity = firstCity+1; secondCity < length-1; secondCity++)
+                {
+                    routes[index++] = StringFromSwap(route, firstCity, secondCity);
+                }
+            }
+            if(index != numberOfAdjacents)
+            {
+                Console.WriteLine("Numero de rutas mal calculado");
+            }
+            return routes;
+        }
+
+        private string StringFromSwap(string route, int firstCity, int secondCity)
+        {
+            string result = "";
+            char first = route[firstCity];
+            char second = route[secondCity];
+
+            result = route.Replace(first, second);
+            result = result.Remove(secondCity) + first + result.Substring(secondCity + 1);
+
+            return result;
+        }
+
+        private int NumberOfAdjacentRoutes(string route)
+        {
+            int count = 0;
+            int max = route.Length - 3;
+            for(int i = 1; i <= max; i++)
+            {
+                count += i;
+            }
+            
+            return count;
         }
 
         private string RandomRoute ()
         {
             string route = "";
-            string citiesList = alphabet.Substring(1, numberOfCities);
+            string citiesList = alphabet.Substring(0, numberOfCities);
 
-            route += alphabet[0];
-            for (int i = 0; i < numberOfCities - 1; i++)
+            //route += alphabet[0];
+            for (int i = 0; i < numberOfCities; i++)
             {
                 int number = rnd.Next(citiesList.Length);
-                route += alphabet[number];
+                route += citiesList[number];
                 citiesList = citiesList.Remove(number, 1);
             }
-            route += alphabet[0];
+            route += route[0];
 
             return route;
         }

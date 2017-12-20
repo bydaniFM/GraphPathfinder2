@@ -6,10 +6,18 @@ namespace ConsoleApp1
     {
         static void Main(string[] args)
         {
-            Map map = new Map(7, 1000, 1000);
+            Map map = new Map(52, 1000, 1000);
             map.PrintDistanceChart();
 
-            map.BruteForce();
+            //map.BruteForce();
+            Console.WriteLine("---------------------------------");
+            map.HillClimbing();
+            Console.WriteLine("---------------------------------");
+            map.HillClimbing();
+            Console.WriteLine("---------------------------------");
+            map.HillClimbing();
+            Console.WriteLine("---------------------------------");
+            Console.WriteLine("END");
 
             Console.ReadLine();
         }
